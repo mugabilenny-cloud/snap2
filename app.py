@@ -1,31 +1,35 @@
 import streamlit as st
 
-# Set page to be narrow and clean
 st.set_page_config(page_title="Snap Delivery", layout="centered")
 
-# Enhanced CSS for perfect alignment
+# CSS to fix the overflow and alignment issues
 st.markdown("""
     <style>
-    /* Remove Streamlit's default header and padding */
+    /* 1. Force Streamlit to let us use the full width/height of the block */
+    .main .block-container {
+        padding: 0;
+        max-width: 100%;
+        display: flex;
+        justify-content: center;
+    }
     header, footer, #MainMenu {visibility: hidden;}
-    .block-container {padding: 0rem; max-width: 400px;}
-    
-    /* The Mobile Frame */
-    .phone-wrapper {
+
+    /* 2. The Phone Container - Fixed dimensions and hidden overflow */
+    .phone-view {
         width: 375px;
-        height: 750px;
-        margin: 20px auto;
-        border: 10px solid #1e1e1e;
+        height: 700px;
+        border: 12px solid #1a1a1a;
         border-radius: 45px;
-        overflow: hidden;
         position: relative;
-        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-        background-color: #fff;
+        overflow: hidden; /* This stops the image/text spill seen in Capture 4 */
+        background-color: #000;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+        margin: 20px auto;
         display: flex;
         flex-direction: column;
     }
 
-    /* Background Area */
+    /* 3. Background with proper scaling */
     .bg-image {
         position: absolute;
         top: 0;
@@ -39,90 +43,90 @@ st.markdown("""
         z-index: 1;
     }
 
-    /* Content Overlay */
-    .content-overlay {
+    /* 4. Content Container - Uses Flexbox to space items perfectly */
+    .content-container {
         position: relative;
         z-index: 2;
         height: 100%;
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
-        padding: 60px 30px;
+        justify-content: space-between; /* Pushes top and bottom content apart */
+        padding: 50px 30px;
         color: white;
         text-align: left;
     }
 
-    .logo-area {
+    .brand-logo {
         font-size: 28px;
         font-weight: 800;
         text-align: center;
-        margin-top: 20px;
+        margin-top: 10px;
     }
 
-    .text-area h1 {
-        font-size: 32px;
+    .bottom-section h1 {
+        font-size: 34px;
         font-weight: 800;
         line-height: 1.1;
         margin-bottom: 10px;
         color: white !important;
     }
 
-    /* Streamlit Button Styling */
+    .bottom-section p {
+        font-size: 16px;
+        margin-bottom: 25px;
+        opacity: 0.9;
+    }
+
+    /* 5. Custom Button Styling for Streamlit */
     div.stButton > button {
         width: 100%;
         background-color: #006d77 !important;
         color: white !important;
-        border-radius: 12px !important;
-        padding: 20px !important;
-        font-weight: bold !important;
         border: none !important;
-        text-transform: none;
-    }
-    
-    .login-container {
-        padding: 40px 25px;
-        z-index: 3;
-        background: white;
-        height: 100%;
+        padding: 18px !important;
+        border-radius: 12px !important;
+        font-size: 16px !important;
+        font-weight: bold !important;
     }
     </style>
     """, unsafe_allow_html=True)
 
-# Initialize Session State
+# App Logic
 if 'page' not in st.session_state:
     st.session_state.page = 'onboarding'
 
-# Wrap everything in the phone frame
-st.markdown('<div class="phone-wrapper">', unsafe_allow_html=True)
+# The Mobile Frame
+st.markdown('<div class="phone-view">', unsafe_allow_html=True)
 
 if st.session_state.page == 'onboarding':
-    # This div holds the background and the text
+    # Background and Content Layout
     st.markdown('''
         <div class="bg-image"></div>
-        <div class="content-overlay">
-            <div class="logo-area">Snap</div>
-            <div class="text-area">
+        <div class="content-container">
+            <div class="brand-logo">Snap</div>
+            <div class="bottom-section">
                 <h1>Request for Delivery in few clicks</h1>
                 <p>On-demand delivery whenever and wherever the need arises.</p>
             </div>
         </div>
     ''', unsafe_allow_html=True)
     
-    # Place button at the bottom
+    # Button placed within the bottom section padding
     with st.container():
         st.markdown('<div style="padding: 0 30px 40px 30px; position: absolute; bottom: 0; width: 100%; z-index: 10;">', unsafe_allow_html=True)
         if st.button("Get Started"):
             st.session_state.page = 'login'
             st.rerun()
-        st.markdown('<p style="text-align:center; color:white; font-size:12px; margin-top:10px;">Have an account already? <b>SIGN IN</b></p>', unsafe_allow_html=True)
+        st.markdown('<p style="text-align:center; color:white; font-size:13px; margin-top:15px; cursor:pointer;">Have an account already? <u>SIGN IN</u></p>', unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)
 
 elif st.session_state.page == 'login':
-    st.markdown('<div class="login-container">', unsafe_allow_html=True)
+    # Simple Login Screen to test navigation
+    st.markdown('<div style="background:white; height:100%; padding: 40px 30px; z-index: 5; position: relative;">', unsafe_allow_html=True)
     if st.button("← Back"):
         st.session_state.page = 'onboarding'
         st.rerun()
-    st.header("Welcome Back")
+    st.markdown('<h2 style="color:#006d77; margin-top:20px;">Welcome Back</h2>', unsafe_allow_html=True)
     st.text_input("Email")
     st.text_input("Password", type="password")
     st.button("Sign In")
